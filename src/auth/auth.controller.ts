@@ -7,7 +7,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('/register')
-  signUp(@Body() authCredentialsDto: AuthCredentialsDto): Promise<void> {
+  register(@Body() authCredentialsDto: AuthCredentialsDto): Promise<AuthCredentialsDto> {
     return this.authService.register(authCredentialsDto);
   }
 }
