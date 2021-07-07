@@ -4,6 +4,7 @@ import {
   MaxLength,
   MinLength,
   IsEmail,
+  IsOptional,
 } from 'class-validator';
 const { VALIDATE_ERROR } = require('../../constants');
 
@@ -19,12 +20,5 @@ export class AuthCredentialsDto {
   })
   password: string;
 
-  @IsString()
-  firstName: string;
-
-  @IsString()
-  lastName: string;
-
-  @IsString()
-  avatar: string;
+  
 }
