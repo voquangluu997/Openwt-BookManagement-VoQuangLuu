@@ -7,4 +7,5 @@ export enum VALIDATE_ERROR {
 
 export enum EXCEPTION_MESSAGE {
   UNAUTHORIZED = 'Pasword is to weakPlease check your login credentials',
+  USER_NOTFOUND = 'User not found',
 }
