@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { Author } from './author.entity';
 
-@Controller('author')
+@Controller('authors')
 @UseGuards(AuthGuard())
 export class AuthorController {
   constructor(private authorService: AuthorService) {}

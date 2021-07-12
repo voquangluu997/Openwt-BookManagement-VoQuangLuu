@@ -1,3 +1,5 @@
+import { CategoryModule } from './category/category.module';
+import { AuthorModule } from './author/author.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -26,6 +28,8 @@ import { UserModule } from './user/user.module';
     }),
     AuthModule,
     UserModule,
+    AuthorModule,
+    CategoryModule
   ],
 })
 export class AppModule {}

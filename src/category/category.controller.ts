@@ -1,4 +1,4 @@
-import { GetCategorysFilterDto } from './dto/get-categorys-filter.dto';
+import { GetCategoriesFilterDto } from './dto/get-categories-filter.dto';
 import { CategoryService } from './category.service';
 import { CategoryDto } from './dto/category.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -15,14 +15,14 @@ import {
 } from '@nestjs/common';
 import { Category } from './category.entity';
 
-@Controller('category')
+@Controller('categories')
 @UseGuards(AuthGuard())
 export class CategoryController {
   constructor(private categoryService: CategoryService) {}
 
   @Get()
-  getCategorys(@Query() filterDto: GetCategorysFilterDto): Promise<Category[]> {
-    return this.categoryService.getCategorys(filterDto);
+  getCategorys(@Query() filterDto: GetCategoriesFilterDto): Promise<Category[]> {
+    return this.categoryService.getCategories(filterDto);
   }
 
   @Get('/:id')
