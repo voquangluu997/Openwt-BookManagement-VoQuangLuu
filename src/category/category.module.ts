@@ -3,10 +3,10 @@ import { CategoryService } from './category.service';
 import { CategoryController } from './category.controller';
 import { AuthModule } from './../auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CategoryRepository } from './category.repository';
+import { Category } from './category.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CategoryRepository]), AuthModule],
+  imports: [TypeOrmModule.forFeature([Category]), AuthModule],
   providers: [CategoryService],
   controllers: [CategoryController],
 })

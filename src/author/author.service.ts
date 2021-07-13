@@ -4,16 +4,16 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Author } from './author.entity';
 import { AuthorDto } from './dto/author.dto';
-import { AuthorRepository } from './author.repository';
 import { GetAuthorsFilterDto } from './dto/get-authors-filter.dto';
 
 @Injectable()
 export class AuthorService {
   constructor(
-    @InjectRepository(AuthorRepository)
-    private authorRepository: AuthorRepository,
+    @InjectRepository(Author)
+    private authorRepository: Repository<Author>,
   ) {}
 
   async getAuthors(filterDto: GetAuthorsFilterDto): Promise<Author[]> {
@@ -28,8 +28,7 @@ export class AuthorService {
     }
 
     try {
-      const authors = query.getMany();
-      return authors;
+      return query.getMany();
     } catch (error) {
       throw new InternalServerErrorException();
     }
@@ -37,7 +36,8 @@ export class AuthorService {
 
   async getAuthorById(id: string): Promise<Author> {
     const found = await this.authorRepository.findOne({
-      where: { id, is_deleted: false },
+      id,
+      is_deleted: false,
     });
     if (!found) {
       throw new NotFoundException(`Author with ID ${id} not found`);
@@ -55,7 +55,8 @@ export class AuthorService {
 
   async updateAuthor(id: string, authorDto: AuthorDto): Promise<Author> {
     const author = await this.authorRepository.findOne({
-      where: { id, is_deleted: false },
+      id,
+      is_deleted: false,
     });
     if (!author) {
       throw new NotFoundException(`Author with ID ${id} not found`);

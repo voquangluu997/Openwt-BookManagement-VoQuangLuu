@@ -1,4 +1,3 @@
-import { CategoryRepository } from './category.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   Injectable,
@@ -8,12 +7,13 @@ import {
 import { GetCategoriesFilterDto } from './dto/get-categories-filter.dto';
 import { Category } from './category.entity';
 import { CategoryDto } from './dto/category.dto';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class CategoryService {
   constructor(
-    @InjectRepository(CategoryRepository)
-    private categoryRepository: CategoryRepository,
+    @InjectRepository(Category)
+    private categoryRepository: Repository<Category>,
   ) {}
 
   async getCategories(filterDto: GetCategoriesFilterDto): Promise<Category[]> {
@@ -28,8 +28,7 @@ export class CategoryService {
     }
 
     try {
-      const categories = query.getMany();
-      return categories;
+      return query.getMany();
     } catch (error) {
       throw new InternalServerErrorException();
     }
@@ -37,7 +36,8 @@ export class CategoryService {
 
   async getCategoryById(id: string): Promise<Category> {
     const found = await this.categoryRepository.findOne({
-      where: { id, is_deleted: false },
+      id,
+      is_deleted: false,
     });
     if (!found) {
       throw new NotFoundException(`Category with ID ${id} not found`);
@@ -58,7 +58,8 @@ export class CategoryService {
     categoryDto: CategoryDto,
   ): Promise<Category> {
     const category = await this.categoryRepository.findOne({
-      where: { id, is_deleted: false },
+      id,
+      is_deleted: false,
     });
     if (!category) {
       throw new NotFoundException(`Category with ID ${id} not found`);
