@@ -26,7 +26,7 @@ export class AuthorController {
   }
 
   @Get('/:id')
-  getTaskById(@Param('id') id: string): Promise<Author> {
+  getAuthorById(@Param('id') id: string): Promise<Author> {
     return this.authorService.getAuthorById(id);
   }
 
@@ -47,7 +47,7 @@ export class AuthorController {
   }
 
   @Delete('/:id')
-  deleteTask(@Param('id') id: string): Promise<void> {
+  deleteAuthor(@Param('id') id: string): Promise<Author> {
     return this.authorService.deleteAuthor(id);
   }
 }

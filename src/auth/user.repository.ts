@@ -17,8 +17,8 @@ export class UsersRepository extends Repository<User> {
     const user = this.create({
       email,
       password: hashPassword,
-      firstName,
-      lastName,
+      first_name: firstName,
+      last_name: lastName,
       avatar,
     });
 

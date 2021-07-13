@@ -18,9 +18,11 @@ export class AuthorService {
 
   async getAuthors(filterDto: GetAuthorsFilterDto): Promise<Author[]> {
     const { search } = filterDto;
-    const query = this.authorRepository.createQueryBuilder('author');
+    const query = this.authorRepository
+      .createQueryBuilder('author')
+      .where(`author.is_deleted = :isDeleted`, { isDeleted: false });
     if (search) {
-      query.where(`LOWER(Author.name) LIKE LOWER(:search)`, {
+      query.andWhere(`LOWER(author.name) LIKE LOWER(:search)`, {
         search: `%${search}%`,
       });
     }
@@ -34,7 +36,9 @@ export class AuthorService {
   }
 
   async getAuthorById(id: string): Promise<Author> {
-    const found = await this.authorRepository.findOne({ where: { id } });
+    const found = await this.authorRepository.findOne({
+      where: { id, is_deleted: false },
+    });
     if (!found) {
       throw new NotFoundException(`Author with ID ${id} not found`);
     }
@@ -47,21 +51,27 @@ export class AuthorService {
       name,
     });
     return await this.authorRepository.save(author);
-    // return author;
   }
 
   async updateAuthor(id: string, authorDto: AuthorDto): Promise<Author> {
-    const author = await this.authorRepository.findOne({ where: { id } });
+    const author = await this.authorRepository.findOne({
+      where: { id, is_deleted: false },
+    });
     if (!author) {
       throw new NotFoundException(`Author with ID ${id} not found`);
     }
     return await this.authorRepository.save({ ...author, ...authorDto });
   }
 
-  async deleteAuthor(id: string): Promise<void> {
-    const result = await this.authorRepository.delete({ id });
-    if (result.affected === 0) {
+  async deleteAuthor(id: string): Promise<Author> {
+    const result = await this.authorRepository.findOne({
+      id,
+      is_deleted: false,
+    });
+    if (!result) {
       throw new NotFoundException(`Autor with ID ${id} not found`);
     }
+    result.is_deleted = true;
+    return await this.authorRepository.save(result);
   }
 }

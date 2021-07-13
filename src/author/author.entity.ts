@@ -7,4 +7,7 @@ export class Author {
 
   @Column()
   name: string;
+
+  @Column({ default: false })
+  is_deleted: boolean;
 }

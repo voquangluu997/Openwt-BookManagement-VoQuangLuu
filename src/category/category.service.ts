@@ -18,9 +18,11 @@ export class CategoryService {
 
   async getCategories(filterDto: GetCategoriesFilterDto): Promise<Category[]> {
     const { search } = filterDto;
-    const query = this.categoryRepository.createQueryBuilder('category');
+    const query = this.categoryRepository
+      .createQueryBuilder('category')
+      .where(`category.is_deleted = :isDeleted`, { isDeleted: false });
     if (search) {
-      query.where(`LOWER(category.name) LIKE LOWER(:search)`, {
+      query.andWhere(`LOWER(category.name) LIKE LOWER(:search)`, {
         search: `%${search}%`,
       });
     }
@@ -34,7 +36,9 @@ export class CategoryService {
   }
 
   async getCategoryById(id: string): Promise<Category> {
-    const found = await this.categoryRepository.findOne({ where: { id } });
+    const found = await this.categoryRepository.findOne({
+      where: { id, is_deleted: false },
+    });
     if (!found) {
       throw new NotFoundException(`Category with ID ${id} not found`);
     }
@@ -42,7 +46,7 @@ export class CategoryService {
   }
 
   async createCategory(categoryDto: CategoryDto): Promise<Category> {
-    const { name } = CategoryDto;
+    const { name } = categoryDto;
     const category = this.categoryRepository.create({
       name,
     });
@@ -53,16 +57,24 @@ export class CategoryService {
     id: string,
     categoryDto: CategoryDto,
   ): Promise<Category> {
-    const category = await this.getCategoryById(id);
-    category.name = categoryDto.name;
-    await this.categoryRepository.save(category);
-    return category;
-  }
-
-  async deleteCategory(id: string): Promise<void> {
-    const result = await this.categoryRepository.delete({ id });
-    if (result.affected === 0) {
+    const category = await this.categoryRepository.findOne({
+      where: { id, is_deleted: false },
+    });
+    if (!category) {
       throw new NotFoundException(`Category with ID ${id} not found`);
     }
+    return await this.categoryRepository.save({ ...category, ...categoryDto });
+  }
+
+  async deleteCategory(id: string) {
+    const result = await this.categoryRepository.findOne({
+      id,
+      is_deleted: false,
+    });
+    if (!result) {
+      throw new NotFoundException(`Category with ID ${id} not found`);
+    }
+    result.is_deleted = true;
+    return await this.categoryRepository.save(result);
   }
 }

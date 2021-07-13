@@ -8,7 +8,6 @@ import { User } from '../auth/user.entity';
 import { EXCEPTION_MESSAGE } from '../constants';
 import * as bcrypt from 'bcrypt';
 import { VALIDATE_ERROR, SUCCESS_MESSAGE } from '../constants';
-
 @Injectable()
 export class UserService {
   constructor(
@@ -21,8 +20,14 @@ export class UserService {
     if (!found) {
       throw new NotFoundException(EXCEPTION_MESSAGE.USER_NOTFOUND);
     }
-    const { email, firstName, lastName, avatar } = found;
-    return { id, email, firstName, lastName, avatar };
+    let userInfo: GetUserProfileDto = {
+      id: found.id,
+      firstName: found.first_name,
+      lastName: found.last_name,
+      email: found.email,
+      avatar: found.avatar,
+    };
+    return userInfo;
   }
 
   async updateUserProfile(
@@ -30,8 +35,8 @@ export class UserService {
     user: User,
   ): Promise<User> {
     const { firstName, lastName, avatar } = updateUserProfileDto;
-    user.firstName = firstName ? firstName : user.firstName;
-    user.lastName = lastName ? lastName : user.lastName;
+    user.first_name = firstName ? firstName : user.first_name;
+    user.last_name = lastName ? lastName : user.last_name;
     user.avatar = avatar ? avatar : user.avatar;
     await this.userRepository.save(user);
     return user;

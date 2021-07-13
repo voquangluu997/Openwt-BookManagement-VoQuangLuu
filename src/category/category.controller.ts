@@ -26,7 +26,7 @@ export class CategoryController {
   }
 
   @Get('/:id')
-  getTaskById(@Param('id') id: string): Promise<Category> {
+  getCategoryById(@Param('id') id: string): Promise<Category> {
     return this.categoryService.getCategoryById(id);
   }
 
@@ -47,7 +47,7 @@ export class CategoryController {
   }
 
   @Delete('/:id')
-  deleteTask(@Param('id') id: string): Promise<void> {
+  deleteCategory(@Param('id') id: string){
     return this.categoryService.deleteCategory(id);
   }
 }
