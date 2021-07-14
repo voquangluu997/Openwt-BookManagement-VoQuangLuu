@@ -47,7 +47,7 @@ export class AuthorController {
   }
 
   @Delete('/:id')
-  deleteAuthor(@Param('id') id: string): Promise<Author> {
+  deleteAuthor(@Param('id') id: string): Promise<boolean> {
     return this.authorService.deleteAuthor(id);
   }
 }

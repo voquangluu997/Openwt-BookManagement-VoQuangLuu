@@ -67,7 +67,7 @@ export class CategoryService {
     return await this.categoryRepository.save({ ...category, ...categoryDto });
   }
 
-  async deleteCategory(id: string) {
+  async deleteCategory(id: string): Promise<boolean> {
     const result = await this.categoryRepository.findOne({
       id,
       is_deleted: false,
@@ -76,6 +76,6 @@ export class CategoryService {
       throw new NotFoundException(`Category with ID ${id} not found`);
     }
     result.is_deleted = true;
-    return await this.categoryRepository.save(result);
+    return result.is_deleted;
   }
 }
