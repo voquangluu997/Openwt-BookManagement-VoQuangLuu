@@ -6,11 +6,13 @@ export enum VALIDATE_ERROR {
   EXISTS_EMAIL_CODE = '23505',
   PASSWORD_INCORRECT = 'Password incorrect',
   CONFIRM_PASSWORD_FAILED = 'new password and confirm password must be the same',
+  CONFLICT_CODE = '23505',
 }
 
 export enum EXCEPTION_MESSAGE {
   UNAUTHORIZED = 'Please check your login credentials',
   USER_NOTFOUND = 'User not found',
+  CONFLICT_BOOK_TITLE = 'Book title already exists',
 }
 
 export enum SUCCESS_MESSAGE {
