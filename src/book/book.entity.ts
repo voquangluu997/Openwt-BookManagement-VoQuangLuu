@@ -32,11 +32,6 @@ export class Book {
   @Column({ default: '' })
   cover: string;
 
-  // @Column()
-  // author_id: string[];
-  // @Column()
-  // category_id: string;
-
   @CreateDateColumn()
   created_at: string;
 
