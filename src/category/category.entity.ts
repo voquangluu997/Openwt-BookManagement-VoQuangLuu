@@ -9,8 +9,8 @@ export class Category {
   @Column({ unique: true })
   name: string;
 
-  @Column({ default: 'false' })
-  is_deleted: boolean;
+  @Column({ default: 'false', name: 'is_deleted' })
+  isDeleted: boolean;
 
   @OneToMany(() => Book, (book) => book.category)
   books: Book[];

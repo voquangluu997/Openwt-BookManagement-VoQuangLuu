@@ -1,5 +1,7 @@
+import { EXCEPTION_MESSAGE, VALIDATE_ERROR } from './../constants/index';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
+  ConflictException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -20,7 +22,7 @@ export class CategoryService {
     const { search } = filterDto;
     const query = this.categoryRepository
       .createQueryBuilder('category')
-      .where(`category.is_deleted = :isDeleted`, { isDeleted: false });
+      .where(`category.isDeleted = :isDeleted`, { isDeleted: false });
     if (search) {
       query.andWhere(`LOWER(category.name) LIKE LOWER(:search)`, {
         search: `%${search}%`,
@@ -30,14 +32,16 @@ export class CategoryService {
     try {
       return query.getMany();
     } catch (error) {
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException(
+        EXCEPTION_MESSAGE.GET_CATEGORIES_FAIL,
+      );
     }
   }
 
   async getCategoryById(id: string): Promise<Category> {
     const found = await this.categoryRepository.findOne({
       id,
-      is_deleted: false,
+      isDeleted: false,
     });
     if (!found) {
       throw new NotFoundException(`Category with ID ${id} not found`);
@@ -50,7 +54,15 @@ export class CategoryService {
     const category = this.categoryRepository.create({
       name,
     });
-    return await this.categoryRepository.save(category);
+    try {
+      return await this.categoryRepository.save(category);
+    } catch (error) {
+      if ((error.code = VALIDATE_ERROR.CONFLICT_CODE))
+        throw new ConflictException(EXCEPTION_MESSAGE.CATEGORY_CONFLICT);
+      throw new InternalServerErrorException(
+        EXCEPTION_MESSAGE.CREATE_CATEGORY_FAIL,
+      );
+    }
   }
 
   async updateCategory(
@@ -59,7 +71,7 @@ export class CategoryService {
   ): Promise<Category> {
     const category = await this.categoryRepository.findOne({
       id,
-      is_deleted: false,
+      isDeleted: false,
     });
     if (!category) {
       throw new NotFoundException(`Category with ID ${id} not found`);
@@ -67,15 +79,15 @@ export class CategoryService {
     return await this.categoryRepository.save({ ...category, ...categoryDto });
   }
 
-  async deleteCategory(id: string): Promise<boolean> {
+  async deleteCategory(id: string): Promise<Category> {
     const result = await this.categoryRepository.findOne({
       id,
-      is_deleted: false,
+      isDeleted: false,
     });
     if (!result) {
       throw new NotFoundException(`Category with ID ${id} not found`);
     }
-    result.is_deleted = true;
-    return result.is_deleted;
+    result.isDeleted = true;
+    return result;
   }
 }

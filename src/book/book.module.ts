@@ -1,4 +1,4 @@
-import { CategoryModule } from './../category/category.module';
+import { CategoryModule } from '../category/category.module';
 import { Module } from '@nestjs/common';
 import { BookService } from './book.service';
 import { BookController } from './book.controller';

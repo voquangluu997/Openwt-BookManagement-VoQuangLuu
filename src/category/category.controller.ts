@@ -49,7 +49,7 @@ export class CategoryController {
   }
 
   @Delete('/:id')
-  deleteCategory(@Param('id') id: string): Promise<boolean> {
+  deleteCategory(@Param('id') id: string): Promise<Category> {
     return this.categoryService.deleteCategory(id);
   }
 }

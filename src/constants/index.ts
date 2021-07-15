@@ -6,11 +6,24 @@ export enum VALIDATE_ERROR {
   EXISTS_EMAIL_CODE = '23505',
   PASSWORD_INCORRECT = 'Password incorrect',
   CONFIRM_PASSWORD_FAILED = 'new password and confirm password must be the same',
+  CONFLICT_CODE = '23505',
 }
 
 export enum EXCEPTION_MESSAGE {
   UNAUTHORIZED = 'Please check your login credentials',
   USER_NOTFOUND = 'User not found',
+  GET_AUTHORS_FAIL = 'Fail to get authors',
+  CREATE_AUTHOR_FAIL = 'Fail to create author',
+  GET_CATEGORIES_FAIL = 'Fail to get categories',
+  CREATE_CATEGORY_FAIL = 'Fail to get category',
+  GET_BOOKS_FAIL = 'Fail to get books',
+  CREATE_BOOK_FAIL = 'Fail to create book',
+  CATEGORY_CONFLICT = 'category already exists',
+  BOOK_CONFLICT = 'book already exists',
+  CATEGORY_NOT_FOUND = 'category not found',
+  AUTHOR_NOT_FOUND = 'author not found',
+  BOOK_NOT_FOUND = 'book not found',
+  QUERY_FAIL = 'Query fail, please check your query',
 }
 
 export enum SUCCESS_MESSAGE {

@@ -1,3 +1,4 @@
+import { Category } from 'src/category/category.entity';
 import { GetBooksFilterDto } from './dto/get-book-filters.dto';
 import { BookDto } from './dto/book.dto';
 import {
@@ -8,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Book } from './book.entity';
-import { Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import { VALIDATE_ERROR, EXCEPTION_MESSAGE } from '../constants';
 import { Author } from 'src/author/author.entity';
 @Injectable()
@@ -28,19 +29,52 @@ export class BookService {
       authorId,
       categoryId,
     } = addBookDto;
+
+    try {
+      var author = await getConnection()
+        .getRepository(Author)
+        .createQueryBuilder('author')
+        .where('author.id = :authorId', { authorId })
+        .getOne();
+    } catch (error) {
+      throw new InternalServerErrorException(EXCEPTION_MESSAGE.QUERY_FAIL);
+    }
+
+    try {
+      var category = await getConnection()
+        .getRepository(Category)
+        .createQueryBuilder('category')
+        .where('category.id = :categoryId', {
+          categoryId,
+        })
+        .getOne();
+    } catch (error) {
+      throw new InternalServerErrorException(EXCEPTION_MESSAGE.QUERY_FAIL);
+    }
+
+    if (!author)
+      throw new NotFoundException(EXCEPTION_MESSAGE.AUTHOR_NOT_FOUND);
+    if (!category)
+      throw new NotFoundException(EXCEPTION_MESSAGE.CATEGORY_NOT_FOUND);
+
     const book = this.bookRepository.create({
       title,
       price,
-      publish_year: publishYear,
+      publishYear,
       description,
       cover,
-      author: { id: authorId },
-      category: { id: categoryId },
+      author,
+      category,
     });
+
     try {
-      return await this.bookRepository.save(book);
+      return await this.bookRepository.save({ ...book, author, category });
     } catch (error) {
-      throw new InternalServerErrorException();
+      if (error.code == VALIDATE_ERROR.CONFLICT_CODE)
+        throw new ConflictException(EXCEPTION_MESSAGE.BOOK_CONFLICT);
+      throw new InternalServerErrorException(
+        EXCEPTION_MESSAGE.CREATE_BOOK_FAIL,
+      );
     }
   }
 
@@ -50,7 +84,7 @@ export class BookService {
       .createQueryBuilder('book')
       .leftJoinAndSelect('book.author', 'author')
       .leftJoinAndSelect('book.category', 'category')
-      .where(`book.is_deleted = :isDeleted`, { isDeleted: false });
+      .where(`book.isDeleted = :isDeleted`, { isDeleted: false });
     if (author) {
       query.andWhere(`author.name LIKE :author`, {
         author: `%${author}%`,
@@ -66,13 +100,13 @@ export class BookService {
     try {
       return query.getMany();
     } catch (error) {
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException(EXCEPTION_MESSAGE.GET_BOOKS_FAIL);
     }
   }
 
   async getBookById(id: string): Promise<Book> {
     const book = await this.bookRepository.findOne({
-      where: { id, is_deleted: false },
+      where: { id, isDeleted: false },
       relations: ['author', 'category'],
     });
     if (!book) {
@@ -85,25 +119,57 @@ export class BookService {
     const book = await this.bookRepository.findOne({
       where: {
         id,
-        is_deleted: false,
+        isDeleted: false,
       },
       relations: ['author', 'category'],
     });
-    if (!book) {
-      throw new NotFoundException(`book with ID ${id} not found`);
+
+    try {
+      var author = await getConnection()
+        .getRepository(Author)
+        .createQueryBuilder('author')
+        .where('author.id = :authorId', { authorId: bookDto.authorId })
+        .getOne();
+    } catch (error) {
+      throw new InternalServerErrorException(EXCEPTION_MESSAGE.QUERY_FAIL);
     }
-    return await this.bookRepository.save({ ...book, ...bookDto });
+
+    try {
+      var category = await getConnection()
+        .getRepository(Category)
+        .createQueryBuilder('category')
+        .where('category.id = :categoryId', {
+          categoryId: bookDto.categoryId,
+        })
+        .getOne();
+    } catch (error) {
+      throw new InternalServerErrorException(EXCEPTION_MESSAGE.QUERY_FAIL);
+    }
+
+    if (!author)
+      throw new NotFoundException(EXCEPTION_MESSAGE.AUTHOR_NOT_FOUND);
+    if (!category)
+      throw new NotFoundException(EXCEPTION_MESSAGE.CATEGORY_NOT_FOUND);
+    if (!book) {
+      throw new NotFoundException(EXCEPTION_MESSAGE.BOOK_NOT_FOUND);
+    }
+    return await this.bookRepository.save({
+      ...book,
+      ...bookDto,
+      author,
+      category,
+    });
   }
 
-  async deleteBook(id: string): Promise<boolean> {
+  async deleteBook(id: string): Promise<Book> {
     const book = await this.bookRepository.findOne({
       id,
-      is_deleted: false,
+      isDeleted: false,
     });
     if (!book) {
       throw new NotFoundException(`Book with ID ${id} not found`);
     }
-    book.is_deleted = true;
-    return book.is_deleted;
+    book.isDeleted = true;
+    return book;
   }
 }

@@ -38,7 +38,7 @@ export class BookController {
   }
 
   @Delete('/:id')
-  deleteBook(@Param('id') id: string): Promise<boolean> {
+  deleteBook(@Param('id') id: string): Promise<Book> {
     return this.bookService.deleteBook(id);
   }
 }

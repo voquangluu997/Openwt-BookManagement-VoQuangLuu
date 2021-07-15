@@ -18,8 +18,8 @@ export class Book {
   @Column()
   title: string;
 
-  @Column()
-  publish_year: string;
+  @Column({ name: 'publish_year' })
+  publishYear: string;
 
   @Column()
   price: number;
@@ -36,8 +36,8 @@ export class Book {
   @UpdateDateColumn()
   updated_at: string;
 
-  @Column({ default: false })
-  is_deleted: boolean;
+  @Column({ default: false, name: 'is_deleted' })
+  isDeleted: boolean;
 
   @ManyToOne(() => Category, (category) => category.books, {
     onUpdate: 'CASCADE',

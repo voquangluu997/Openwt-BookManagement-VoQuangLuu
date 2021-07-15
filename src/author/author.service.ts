@@ -1,3 +1,4 @@
+import { EXCEPTION_MESSAGE } from './../constants/index';
 import {
   Injectable,
   InternalServerErrorException,
@@ -8,7 +9,6 @@ import { Repository } from 'typeorm';
 import { Author } from './author.entity';
 import { AuthorDto } from './dto/author.dto';
 import { GetAuthorsFilterDto } from './dto/get-authors-filter.dto';
-
 @Injectable()
 export class AuthorService {
   constructor(
@@ -20,7 +20,7 @@ export class AuthorService {
     const { search } = filterDto;
     const query = this.authorRepository
       .createQueryBuilder('author')
-      .where(`author.is_deleted = :isDeleted`, { isDeleted: false });
+      .where(`author.isDeleted = :isDeleted`, { isDeleted: false });
     if (search) {
       query.andWhere(`LOWER(author.name) LIKE LOWER(:search)`, {
         search: `%${search}%`,
@@ -30,14 +30,14 @@ export class AuthorService {
     try {
       return query.getMany();
     } catch (error) {
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException(EXCEPTION_MESSAGE.GET_AUTHORS_FAIL);
     }
   }
 
   async getAuthorById(id: string): Promise<Author> {
     const found = await this.authorRepository.findOne({
       id,
-      is_deleted: false,
+      isDeleted: false,
     });
     if (!found) {
       throw new NotFoundException(`Author with ID ${id} not found`);
@@ -50,13 +50,17 @@ export class AuthorService {
     const author = this.authorRepository.create({
       name,
     });
-    return await this.authorRepository.save(author);
+    try{
+    return await this.authorRepository.save(author);}
+    catch(error){
+      throw new InternalServerErrorException(EXCEPTION_MESSAGE.CREATE_AUTHOR_FAIL)
+    }
   }
 
   async updateAuthor(id: string, authorDto: AuthorDto): Promise<Author> {
     const author = await this.authorRepository.findOne({
       id,
-      is_deleted: false,
+      isDeleted: false,
     });
     if (!author) {
       throw new NotFoundException(`Author with ID ${id} not found`);
@@ -64,15 +68,15 @@ export class AuthorService {
     return await this.authorRepository.save({ ...author, ...authorDto });
   }
 
-  async deleteAuthor(id: string): Promise<boolean> {
+  async deleteAuthor(id: string): Promise<Author> {
     const result = await this.authorRepository.findOne({
       id,
-      is_deleted: false,
+      isDeleted: false,
     });
     if (!result) {
       throw new NotFoundException(`Autor with ID ${id} not found`);
     }
-    result.is_deleted = true;
-    return result.is_deleted;
+    result.isDeleted = true;
+    return result;
   }
 }
