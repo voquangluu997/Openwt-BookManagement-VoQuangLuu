@@ -1,3 +1,4 @@
+import { AuthGuard } from '@nestjs/passport';
 import { GetBooksFilterDto } from './dto/get-book-filters.dto';
 import {
   Body,
@@ -8,12 +9,14 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { Book } from './book.entity';
 import { BookService } from './book.service';
 import { BookDto } from './dto/book.dto';
 
 @Controller('books')
+@UseGuards(AuthGuard())
 export class BookController {
   constructor(private bookService: BookService) {}
 

@@ -15,7 +15,13 @@ import { BookModule } from './book/book.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
+        const isProduction = configService.get('STAGE') === 'prod';
+
         return {
+          ssl: isProduction,
+          extra: {
+            ssl: isProduction ? { rejectUnauthorized: false } : null,
+          },
           type: 'postgres',
           autoLoadEntities: true,
           synchronize: true,
@@ -31,7 +37,7 @@ import { BookModule } from './book/book.module';
     UserModule,
     AuthorModule,
     CategoryModule,
-    BookModule
+    BookModule,
   ],
 })
 export class AppModule {}
