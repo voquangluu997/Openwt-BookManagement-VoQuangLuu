@@ -21,7 +21,9 @@ export class CategoryController {
   constructor(private categoryService: CategoryService) {}
 
   @Get()
-  getCategorys(@Query() filterDto: GetCategoriesFilterDto): Promise<Category[]> {
+  getCategorys(
+    @Query() filterDto: GetCategoriesFilterDto,
+  ): Promise<Category[]> {
     return this.categoryService.getCategories(filterDto);
   }
 
@@ -47,7 +49,7 @@ export class CategoryController {
   }
 
   @Delete('/:id')
-  deleteCategory(@Param('id') id: string){
+  deleteCategory(@Param('id') id: string): Promise<Category> {
     return this.categoryService.deleteCategory(id);
   }
 }
