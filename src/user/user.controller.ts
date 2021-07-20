@@ -16,6 +16,11 @@ export class UserController {
     return this.userService.getUser(id);
   }
 
+  @Get()
+  getProfile( @GetUser() user: User): Promise<GetUserProfileDto> {
+    return this.userService.getProfile(user);
+  }
+
   @Patch()
   updateUser(
     @Body() updateUserProfileDto: UpdateUserProfileDto,
@@ -28,7 +33,7 @@ export class UserController {
   updatePassword(
     @Body() updatePasswordDto: UpdatePasswordDto,
     @GetUser() user: User,
-  ): Promise<{message: string}> {
+  ): Promise<{ message: string }> {
     return this.userService.updatePassword(updatePasswordDto, user);
   }
 }

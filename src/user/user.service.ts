@@ -17,15 +17,28 @@ export class UserService {
 
   async getUser(id: string): Promise<GetUserProfileDto> {
     const found = await this.userRepository.findOne({ where: { id } });
+    const { firstName, lastName, email, avatar } = found;
     if (!found) {
       throw new NotFoundException(EXCEPTION_MESSAGE.USER_NOTFOUND);
     }
     let userInfo: GetUserProfileDto = {
-      id: found.id,
-      firstName: found.first_name,
-      lastName: found.last_name,
+      id,
+      firstName,
+      lastName,
       email: found.email,
       avatar: found.avatar,
+    };
+    return userInfo;
+  }
+
+  async getProfile(user: User): Promise<GetUserProfileDto> {
+    const { id, firstName, lastName, email, avatar } = user;
+    let userInfo: GetUserProfileDto = {
+      id,
+      firstName,
+      lastName,
+      email,
+      avatar,
     };
     return userInfo;
   }
@@ -35,8 +48,8 @@ export class UserService {
     user: User,
   ): Promise<User> {
     const { firstName, lastName, avatar } = updateUserProfileDto;
-    user.first_name = firstName ? firstName : user.first_name;
-    user.last_name = lastName ? lastName : user.last_name;
+    user.firstName = firstName ? firstName : user.firstName;
+    user.lastName = lastName ? lastName : user.lastName;
     user.avatar = avatar ? avatar : user.avatar;
     await this.userRepository.save(user);
     return user;
