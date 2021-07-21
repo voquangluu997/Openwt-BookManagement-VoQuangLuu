@@ -18,6 +18,6 @@ export class User {
   @Column({ name: 'last_name' })
   lastName: string;
 
-  @Column()
+  @Column({ default: '' })
   avatar: string;
 }
