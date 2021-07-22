@@ -12,6 +12,11 @@ import { Book } from './book.entity';
 import { getConnection, Repository } from 'typeorm';
 import { VALIDATE_ERROR, EXCEPTION_MESSAGE } from '../constants';
 import { Author } from 'src/author/author.entity';
+
+export interface Ipagination {
+  page: number;
+  limit: number;
+}
 @Injectable()
 export class BookService {
   constructor(
@@ -78,13 +83,26 @@ export class BookService {
     }
   }
 
-  async getBooks(filterDto: GetBooksFilterDto): Promise<Book[]> {
-    const { search, author, category } = filterDto;
+  async getBooks(filterDto: GetBooksFilterDto): Promise<any> {
+    const { search, author, category, page, limit } = filterDto;
+    const pagination = {
+      page: page || 1,
+      limit: limit || 10,
+    };
+    const skippedItems = (pagination.page - 1) * pagination.limit;
     const query = this.bookRepository
       .createQueryBuilder('book')
       .leftJoinAndSelect('book.author', 'author')
       .leftJoinAndSelect('book.category', 'category')
       .where(`book.isDeleted = :isDeleted`, { isDeleted: false });
+
+    if (search) {
+      query.andWhere(
+        '(LOWER(book.title) LIKE LOWER(:search) OR LOWER(book.publishYear) LIKE LOWER(:search))',
+        { search: `%${search}%` },
+      );
+    }
+
     if (author) {
       query.andWhere(`author.name LIKE :author`, {
         author: `%${author}%`,
@@ -98,7 +116,11 @@ export class BookService {
     }
 
     try {
-      return query.getMany();
+      return query
+        .orderBy('book.title', 'ASC')
+        .limit(pagination.limit)
+        .offset(skippedItems)
+        .getManyAndCount();
     } catch (error) {
       throw new InternalServerErrorException(EXCEPTION_MESSAGE.GET_BOOKS_FAIL);
     }
