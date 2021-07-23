@@ -88,7 +88,6 @@ export class BookService {
     const pagination = {
       page: page || 1,
       limit: limit || 10,
-      sort: sort || 'ASC',
     };
 
     const skippedItems = (pagination.page - 1) * pagination.limit;
@@ -118,11 +117,16 @@ export class BookService {
     }
 
     try {
-      return query
-        .orderBy('book.title', pagination.sort == 'DESC' ? 'DESC' : 'ASC')
+      let data = await query
+        .orderBy('book.title', sort == 'DESC' ? 'DESC' : 'ASC')
         .limit(pagination.limit)
         .offset(skippedItems)
         .getManyAndCount();
+
+      return {
+        data: data[0],
+        pagination: { ...pagination, totalRows: data[1] },
+      };
     } catch (error) {
       throw new InternalServerErrorException(EXCEPTION_MESSAGE.GET_BOOKS_FAIL);
     }
