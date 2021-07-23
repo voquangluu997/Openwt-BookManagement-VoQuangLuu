@@ -84,11 +84,13 @@ export class BookService {
   }
 
   async getBooks(filterDto: GetBooksFilterDto): Promise<any> {
-    const { search, author, category, page, limit } = filterDto;
+    const { search, author, category, page, limit, sort } = filterDto;
     const pagination = {
       page: page || 1,
       limit: limit || 10,
+      sort: sort || 'ASC',
     };
+
     const skippedItems = (pagination.page - 1) * pagination.limit;
     const query = this.bookRepository
       .createQueryBuilder('book')
@@ -117,7 +119,7 @@ export class BookService {
 
     try {
       return query
-        .orderBy('book.title', 'ASC')
+        .orderBy('book.title', pagination.sort == 'DESC' ? 'DESC' : 'ASC')
         .limit(pagination.limit)
         .offset(skippedItems)
         .getManyAndCount();

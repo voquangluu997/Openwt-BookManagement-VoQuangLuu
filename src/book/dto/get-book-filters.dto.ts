@@ -24,4 +24,8 @@ export class GetBooksFilterDto {
   @IsNumber()
   @Min(1)
   limit?: number;
+
+  @IsOptional()
+  @IsString()
+  sort?: string;
 }
