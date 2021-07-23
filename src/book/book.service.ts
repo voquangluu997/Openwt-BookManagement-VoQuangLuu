@@ -86,8 +86,8 @@ export class BookService {
   async getBooks(filterDto: GetBooksFilterDto): Promise<any> {
     const { search, author, category, page, limit, sort } = filterDto;
     const pagination = {
-      page: page || 1,
-      limit: limit || 10,
+      page: +page || 1,
+      limit: +limit || 10,
     };
 
     const skippedItems = (pagination.page - 1) * pagination.limit;
