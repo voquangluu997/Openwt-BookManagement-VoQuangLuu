@@ -1,11 +1,11 @@
 export enum VALIDATE_ERROR {
-  PASSWORD_WEAK = 'Pasword is to weak',
+  PASSWORD_WEAK = 'Password must have 8-32 characters, at least 1 upper case and 1 lowercase letter, and at least 1 number and 1 special character',
   NEW_PASSWORD_WEAK = 'New pasword is to weak',
-  INVALID_EMAIL = 'Invalid email',
-  EMAIL_CONFLICT = 'Email already exists',
+  INVALID_EMAIL = 'Email incorrect! Please check your email and try again',
+  EMAIL_CONFLICT = 'Email already exist',
   EXISTS_EMAIL_CODE = '23505',
   PASSWORD_INCORRECT = 'Password incorrect',
-  CONFIRM_PASSWORD_FAILED = 'new password and confirm password must be the same',
+  CONFIRM_PASSWORD_FAILED = 'New password and confirm password must be the same',
   CONFLICT_CODE = '23505',
 }
 
@@ -22,7 +22,7 @@ export enum EXCEPTION_MESSAGE {
   BOOK_CONFLICT = 'book already exists',
   CATEGORY_NOT_FOUND = 'category not found',
   AUTHOR_NOT_FOUND = 'author not found',
-  BOOK_NOT_FOUND = 'book not found',
+  BOOK_NOT_FOUND = 'Book not found',
   QUERY_FAIL = 'Query failed, please check your query',
 }
 

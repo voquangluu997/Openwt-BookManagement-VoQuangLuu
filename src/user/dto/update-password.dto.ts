@@ -1,10 +1,9 @@
-import { IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import { Matches, MaxLength, MinLength, IsNotEmpty } from 'class-validator';
 import { VALIDATE_ERROR } from '../../constants';
 export class UpdatePasswordDto {
-  @IsString()
+  @IsNotEmpty()
   password: string;
 
-  @IsString()
   @MinLength(8)
   @MaxLength(32)
   @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
@@ -12,6 +11,6 @@ export class UpdatePasswordDto {
   })
   newPassword: string;
 
-  @IsString()
+  @IsNotEmpty()
   confirmNewPassword: string;
 }

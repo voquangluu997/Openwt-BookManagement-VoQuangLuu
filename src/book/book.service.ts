@@ -91,6 +91,9 @@ export class BookService {
     };
 
     const skippedItems = (pagination.page - 1) * pagination.limit;
+    console.log( typeof skippedItems);
+    console.log( typeof pagination.page);
+    console.log( typeof pagination.limit);
     const query = this.bookRepository
       .createQueryBuilder('book')
       .leftJoinAndSelect('book.author', 'author')
