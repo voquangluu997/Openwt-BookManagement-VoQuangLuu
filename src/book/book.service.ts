@@ -91,9 +91,6 @@ export class BookService {
     };
 
     const skippedItems = (pagination.page - 1) * pagination.limit;
-    console.log( typeof skippedItems);
-    console.log( typeof pagination.page);
-    console.log( typeof pagination.limit);
     const query = this.bookRepository
       .createQueryBuilder('book')
       .leftJoinAndSelect('book.author', 'author')
@@ -102,7 +99,7 @@ export class BookService {
 
     if (search) {
       query.andWhere(
-        '(LOWER(book.title) LIKE LOWER(:search) OR LOWER(book.publishYear) LIKE LOWER(:search))',
+        '(LOWER(book.title) LIKE LOWER(:search) OR book.publishYear LIKE :search)',
         { search: `%${search}%` },
       );
     }
