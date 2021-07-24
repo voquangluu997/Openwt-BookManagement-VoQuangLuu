@@ -66,8 +66,9 @@ export class UserService {
         const hashPassword = await bcrypt.hash(newPassword, salt);
         user.password = hashPassword;
         await this.userRepository.save(user);
-        return { message: SUCCESS_MESSAGE.PASSWORD_CONFIRM_SUCCESSFULY };
-      } else return { message: VALIDATE_ERROR.CONFIRM_PASSWORD_FAILED };
-    } else return { message: VALIDATE_ERROR.PASSWORD_INCORRECT };
+        throw new Error(SUCCESS_MESSAGE.PASSWORD_CONFIRM_SUCCESSFULY);
+      } else throw new Error(VALIDATE_ERROR.CONFIRM_PASSWORD_FAILED);
+    }
+    throw new Error(VALIDATE_ERROR.PASSWORD_INCORRECT);
   }
 }
