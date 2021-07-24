@@ -1,7 +1,11 @@
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { GetUserProfileDto } from './dto/get-user-profile.dto';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersRepository } from '../auth/user.repository';
 import { User } from '../auth/user.entity';
@@ -67,7 +71,11 @@ export class UserService {
         user.password = hashPassword;
         await this.userRepository.save(user);
         return { message: SUCCESS_MESSAGE.PASSWORD_CONFIRM_SUCCESSFULY };
-      } else return { message: VALIDATE_ERROR.CONFIRM_PASSWORD_FAILED };
-    } else return { message: VALIDATE_ERROR.PASSWORD_INCORRECT };
+      } else
+        throw new InternalServerErrorException(
+          VALIDATE_ERROR.CONFIRM_PASSWORD_FAILED,
+        );
+    } else
+      throw new InternalServerErrorException(VALIDATE_ERROR.PASSWORD_INCORRECT);
   }
 }
