@@ -55,8 +55,14 @@ export class UserService {
     user.firstName = firstName ? firstName : user.firstName;
     user.lastName = lastName ? lastName : user.lastName;
     user.avatar = avatar ? avatar : user.avatar;
-    await this.userRepository.save(user);
-    return user;
+    try {
+      await this.userRepository.save(user);
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Update failed, please try again later',
+      );
+    }
   }
 
   async updatePassword(
