@@ -1,18 +1,13 @@
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { GetUserProfileDto } from './dto/get-user-profile.dto';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersRepository } from '../auth/user.repository';
 import { User } from '../auth/user.entity';
 import { EXCEPTION_MESSAGE } from '../constants';
 import * as bcrypt from 'bcrypt';
 import { VALIDATE_ERROR, SUCCESS_MESSAGE } from '../constants';
-import { exception } from 'console';
 @Injectable()
 export class UserService {
   constructor(
@@ -72,7 +67,7 @@ export class UserService {
         user.password = hashPassword;
         await this.userRepository.save(user);
         return { message: SUCCESS_MESSAGE.PASSWORD_CONFIRM_SUCCESSFULY };
-      } else throw new Error(VALIDATE_ERROR.CONFIRM_PASSWORD_FAILED);
-    } else throw new Error(VALIDATE_ERROR.PASSWORD_INCORRECT);
+      } else return { message: VALIDATE_ERROR.CONFIRM_PASSWORD_FAILED };
+    } else return { message: VALIDATE_ERROR.PASSWORD_INCORRECT };
   }
 }
