@@ -106,6 +106,6 @@ export class CategoryService {
       throw new NotFoundException(`Category with ID ${id} not found`);
     }
     result.isDeleted = true;
-    return result;
+    return await this.categoryRepository.save(result);
   }
 }

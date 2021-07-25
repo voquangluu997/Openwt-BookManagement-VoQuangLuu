@@ -198,6 +198,6 @@ export class BookService {
       throw new NotFoundException(`Book with ID ${id} not found`);
     }
     book.isDeleted = true;
-    return book;
+    return await this.bookRepository.save(book);
   }
 }

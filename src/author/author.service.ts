@@ -99,6 +99,6 @@ export class AuthorService {
       throw new NotFoundException(`Autor with ID ${id} not found`);
     }
     result.isDeleted = true;
-    return result;
+    return await this.authorRepository.save(result);
   }
 }
