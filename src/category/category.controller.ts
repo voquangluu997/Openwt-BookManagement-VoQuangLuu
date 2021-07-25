@@ -23,7 +23,7 @@ export class CategoryController {
   @Get()
   getCategorys(
     @Query() filterDto: GetCategoriesFilterDto,
-  ): Promise<Category[]> {
+  ): Promise<{ data: Category[]; pagination: object }> {
     return this.categoryService.getCategories(filterDto);
   }
 

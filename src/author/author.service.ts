@@ -16,8 +16,18 @@ export class AuthorService {
     private authorRepository: Repository<Author>,
   ) {}
 
-  async getAuthors(filterDto: GetAuthorsFilterDto): Promise<Author[]> {
-    const { search } = filterDto;
+  async getAuthors(
+    filterDto: GetAuthorsFilterDto,
+  ): Promise<{ data: Author[]; pagination: object }> {
+    const { search, page, limit, sort } = filterDto;
+
+    const pagination = {
+      page: +page || 1,
+      limit: +limit || 10,
+    };
+
+    const skippedItems = (pagination.page - 1) * pagination.limit;
+
     const query = this.authorRepository
       .createQueryBuilder('author')
       .where(`author.isDeleted = :isDeleted`, { isDeleted: false });
@@ -28,9 +38,19 @@ export class AuthorService {
     }
 
     try {
-      return query.getMany();
+      let data = await query
+        .orderBy('author.name', sort == 'DESC' ? 'DESC' : 'ASC')
+        .limit(pagination.limit)
+        .offset(skippedItems)
+        .getManyAndCount();
+      return {
+        data: data[0],
+        pagination: { ...pagination, totalRows: data[1] },
+      };
     } catch (error) {
-      throw new InternalServerErrorException(EXCEPTION_MESSAGE.GET_AUTHORS_FAIL);
+      throw new InternalServerErrorException(
+        EXCEPTION_MESSAGE.GET_AUTHORS_FAIL,
+      );
     }
   }
 
@@ -50,10 +70,12 @@ export class AuthorService {
     const author = this.authorRepository.create({
       name,
     });
-    try{
-    return await this.authorRepository.save(author);}
-    catch(error){
-      throw new InternalServerErrorException(EXCEPTION_MESSAGE.CREATE_AUTHOR_FAIL)
+    try {
+      return await this.authorRepository.save(author);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        EXCEPTION_MESSAGE.CREATE_AUTHOR_FAIL,
+      );
     }
   }
 

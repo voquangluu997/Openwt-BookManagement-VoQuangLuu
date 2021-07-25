@@ -21,7 +21,7 @@ export class AuthorController {
   constructor(private authorService: AuthorService) {}
 
   @Get()
-  getAuthors(@Query() filterDto: GetAuthorsFilterDto): Promise<Author[]> {
+  getAuthors(@Query() filterDto: GetAuthorsFilterDto): Promise<{ data: Author[], pagination : object}> {
     return this.authorService.getAuthors(filterDto);
   }
 

@@ -18,8 +18,18 @@ export class CategoryService {
     private categoryRepository: Repository<Category>,
   ) {}
 
-  async getCategories(filterDto: GetCategoriesFilterDto): Promise<Category[]> {
-    const { search } = filterDto;
+  async getCategories(
+    filterDto: GetCategoriesFilterDto,
+  ): Promise<{ data: Category[]; pagination: object }> {
+    const { search, page, limit, sort } = filterDto;
+
+    const pagination = {
+      page: +page || 1,
+      limit: +limit || 10,
+    };
+
+    const skippedItems = (pagination.page - 1) * pagination.limit;
+
     const query = this.categoryRepository
       .createQueryBuilder('category')
       .where(`category.isDeleted = :isDeleted`, { isDeleted: false });
@@ -30,7 +40,15 @@ export class CategoryService {
     }
 
     try {
-      return query.getMany();
+      let data = await query
+        .orderBy('category.name', sort == 'DESC' ? 'DESC' : 'ASC')
+        .limit(pagination.limit)
+        .offset(skippedItems)
+        .getManyAndCount();
+      return {
+        data: data[0],
+        pagination: { ...pagination, totalRows: data[1] },
+      };
     } catch (error) {
       throw new InternalServerErrorException(
         EXCEPTION_MESSAGE.GET_CATEGORIES_FAIL,
