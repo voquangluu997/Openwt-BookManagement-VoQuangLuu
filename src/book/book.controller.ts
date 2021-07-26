@@ -16,7 +16,7 @@ import { BookService } from './book.service';
 import { BookDto } from './dto/book.dto';
 
 @Controller('books')
-@UseGuards(AuthGuard())
+// @UseGuards(AuthGuard())
 export class BookController {
   constructor(private bookService: BookService) {}
 
