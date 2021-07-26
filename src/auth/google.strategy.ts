@@ -9,15 +9,16 @@ import { Injectable } from '@nestjs/common';
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor() {
     super({
-      clientID: (new ConfigService).get('GOOGLE_CLIENT_ID'),
-      clientSecret: (new ConfigService).get('GOOGLE_SECRET'),
-      callbackURL: (new ConfigService).get('GOOGLE_REDIRECT'),
+      clientID: new ConfigService().get('GOOGLE_CLIENT_ID'),
+      clientSecret: new ConfigService().get('GOOGLE_SECRET'),
+      callbackURL: new ConfigService().get('GOOGLE_REDIRECT'),
       scope: ['email', 'profile'],
     });
-  }  
+  }
 
   async validate(
     accessToken: string,
+    refreshToken: string,
     profile: any,
     done: VerifyCallback,
   ): Promise<any> {
@@ -26,7 +27,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       email: emails[0].value,
       firstName: name.givenName,
       lastName: name.familyName,
-      avatar: photos[0].value,
+      picture: photos[0].value,
       accessToken,
     };
     done(null, user);
