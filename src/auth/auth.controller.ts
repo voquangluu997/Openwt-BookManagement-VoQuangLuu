@@ -23,7 +23,7 @@ export class AuthController {
   @UseGuards(AuthGuard('google'))
   async googleAuth(@Req() req) {}
 
-  @Get('/book')
+  @Get('/google/redirect')
   @UseGuards(AuthGuard('google'))
   googleAuthRedirect(@Req() req) {
     return this.authService.googleLogin(req)
