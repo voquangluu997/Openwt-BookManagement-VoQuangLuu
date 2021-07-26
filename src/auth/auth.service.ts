@@ -40,7 +40,7 @@ export class AuthService {
       return 'No user from google';
     }
 
-    console.log(req);
+    console.log('dmm : ', req);
 
     return {
       message: 'User information from google',
