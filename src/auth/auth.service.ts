@@ -1,4 +1,9 @@
-import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { JwtPayload } from './jwt-payload.interface';
@@ -103,4 +108,10 @@ export class AuthService {
     );
     return responseHTML;
   }
+
+  async FBLogin(req) {
+    return req.user;
+  }
+
+
 }

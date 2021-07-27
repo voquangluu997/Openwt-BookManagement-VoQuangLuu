@@ -8,6 +8,8 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { GoogleStrategy } from './google.strategy';
+import { FacebookStrategy } from './facebook-strategy';
+
 
 @Module({
   imports: [
@@ -25,7 +27,7 @@ import { GoogleStrategy } from './google.strategy';
     }),
     TypeOrmModule.forFeature([UsersRepository]),
   ],
-  providers: [AuthService, JwtStrategy,GoogleStrategy],
+  providers: [AuthService, JwtStrategy,GoogleStrategy,FacebookStrategy],
   controllers: [AuthController],
   exports: [JwtStrategy, PassportModule],
 })
