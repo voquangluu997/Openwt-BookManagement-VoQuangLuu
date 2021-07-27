@@ -136,34 +136,33 @@ export class AuthService {
         const accessToken: string = await this.jwtService.sign(payload);
 
         res = { user: ggUser, accessToken };
+      } else {
+        const defaultPassword = email;
+        const salt = await bcrypt.genSalt();
+        const hashPassword = await bcrypt.hash(defaultPassword, salt);
+
+        ggUser = {
+          email,
+          firstName,
+          lastName,
+          avatar,
+        };
+
+        try {
+          await this.usersRepository.save({
+            ...ggUser,
+            ...{ password: hashPassword },
+          });
+
+          const payload: JwtPayload = { email };
+          const accessToken: string = await this.jwtService.sign(payload);
+          res = { user: ggUser, accessToken };
+        } catch (err) {
+          throw new InternalServerErrorException(
+            'Create accout from FB failed',
+          );
+        }
       }
-      // else {
-      //     const defaultPassword = email;
-      //     const salt = await bcrypt.genSalt();
-      //     const hashPassword = await bcrypt.hash(defaultPassword, salt);
-
-      //     ggUser = {
-      //       email,
-      //       firstName,
-      //       lastName,
-      //       avatar,
-      //     };
-
-      //     try {
-      //       await this.usersRepository.save({
-      //         ...ggUser,
-      //         ...{ password: hashPassword },
-      //       });
-
-      //       const payload: JwtPayload = { email };
-      //       const accessToken: string = await this.jwtService.sign(payload);
-      //       res = { user: ggUser, accessToken };
-      //     } catch (err) {
-      //       throw new InternalServerErrorException(
-      //         'Create accout from FB failed',
-      //       );
-      //     }
-      //   }
     } catch (error) {
       throw new InternalServerErrorException('Query facebook user failed');
     }
