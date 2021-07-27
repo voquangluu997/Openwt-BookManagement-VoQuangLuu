@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { JwtPayload } from './jwt-payload.interface';
@@ -35,22 +35,70 @@ export class AuthService {
     }
   }
 
-  googleLogin(req) {
-    // if (!req.user) {
-    //   return 'No user from google';
-    // }
+  async googleLogin(req) {
+    let user = req.user;
+    let res, ggUser;
 
-    // return {
-    //   message: 'User information from google',
-    //   user: req.user,
-    // };
+    if (!user) {
+      throw new NotFoundException('No user from google');
+    }
+
+    let { email, firstName, lastName, avatar } = user;
+
+    try {
+      const found = await this.usersRepository.findOne({
+        email,
+      });
+
+      if (found) {
+        ggUser = this.usersRepository.create({
+          email,
+          firstName: found.firstName,
+          lastName: found.lastName,
+          avatar: found.avatar == '' ? avatar : found.avatar,
+        });
+
+        const payload: JwtPayload = { email };
+        const accessToken: string = await this.jwtService.sign(payload);
+
+        res = { user: ggUser, accessToken };
+      } else {
+        const defaultPassword = email;
+        const salt = await bcrypt.genSalt();
+        const hashPassword = await bcrypt.hash(defaultPassword, salt);
+
+        ggUser = {
+          email,
+          firstName,
+          lastName,
+          avatar,
+        };
+
+        try {
+          await this.usersRepository.save({
+            ...ggUser,
+            ...{ password: hashPassword },
+          });
+
+          const payload: JwtPayload = { email };
+          const accessToken: string = await this.jwtService.sign(payload);
+          res = { user: ggUser, accessToken };
+        } catch (err) {
+          throw new InternalServerErrorException(
+            'Create accout from GG failed',
+          );
+        }
+      }
+    } catch (error) {
+      throw new InternalServerErrorException('Query google user failed');
+    }
 
     var responseHTML =
       '<html><head><title>Main</title></head><body></body><script>let res = %value%; window.opener.postMessage(res, "*");window.close();</script></html>';
     responseHTML = responseHTML.replace(
       '%value%',
       JSON.stringify({
-        user: req.user,
+        userInfo: res,
       }),
     );
     return responseHTML;

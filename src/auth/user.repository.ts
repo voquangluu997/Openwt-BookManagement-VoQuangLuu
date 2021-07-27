@@ -23,8 +23,7 @@ export class UsersRepository extends Repository<User> {
     });
 
     try {
-      await this.save(user);
-      return user;
+    return await this.save(user);
     } catch (err) {
       if (err.code === VALIDATE_ERROR.EXISTS_EMAIL_CODE) {
         throw new ConflictException(VALIDATE_ERROR.EMAIL_CONFLICT);
