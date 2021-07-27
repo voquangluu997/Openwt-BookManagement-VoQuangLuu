@@ -110,63 +110,63 @@ export class AuthService {
   }
 
   async FBLogin(req) {
-    // let user = req.user;
-    // let res, ggUser;
+    let user = req.user;
+    let res, ggUser;
 
-    // if (!user) {
-    //   throw new NotFoundException('No user from facebook');
-    // }
+    if (!user) {
+      throw new NotFoundException('No user from facebook');
+    }
 
-    // let { email, firstName, lastName, avatar } = user;
-    // if (!email) throw new NotFoundException('accout does not have email');
+    let { email, firstName, lastName, avatar } = user;
+    if (!email) throw new NotFoundException('accout does not have email');
 
-    // try {
-    //   const found = await this.usersRepository.findOne({
-    //     email,
-    //   });
+    try {
+      const found = await this.usersRepository.findOne({
+        email,
+      });
 
-    //   if (found) {
-    //     ggUser = this.usersRepository.create({
-    //       email,
-    //       firstName: found.firstName,
-    //       lastName: found.lastName,
-    //       avatar: found.avatar == '' ? avatar : found.avatar,
-    //     });
+      if (found) {
+        ggUser = this.usersRepository.create({
+          email,
+          firstName: found.firstName,
+          lastName: found.lastName,
+          avatar: found.avatar == '' ? avatar : found.avatar,
+        });
 
-    //     const payload: JwtPayload = { email };
-    //     const accessToken: string = await this.jwtService.sign(payload);
+        const payload: JwtPayload = { email };
+        const accessToken: string = await this.jwtService.sign(payload);
 
-    //     res = { user: ggUser, accessToken };
-    //   } else {
-    //     const defaultPassword = email;
-    //     const salt = await bcrypt.genSalt();
-    //     const hashPassword = await bcrypt.hash(defaultPassword, salt);
+        res = { user: ggUser, accessToken };
+      } else {
+        const defaultPassword = email;
+        const salt = await bcrypt.genSalt();
+        const hashPassword = await bcrypt.hash(defaultPassword, salt);
 
-    //     ggUser = {
-    //       email,
-    //       firstName,
-    //       lastName,
-    //       avatar,
-    //     };
+        ggUser = {
+          email,
+          firstName,
+          lastName,
+          avatar,
+        };
 
-    //     try {
-    //       await this.usersRepository.save({
-    //         ...ggUser,
-    //         ...{ password: hashPassword },
-    //       });
+        try {
+          await this.usersRepository.save({
+            ...ggUser,
+            ...{ password: hashPassword },
+          });
 
-    //       const payload: JwtPayload = { email };
-    //       const accessToken: string = await this.jwtService.sign(payload);
-    //       res = { user: ggUser, accessToken };
-    //     } catch (err) {
-    //       throw new InternalServerErrorException(
-    //         'Create accout from FB failed',
-    //       );
-    //     }
-    //   }
-    // } catch (error) {
-    //   throw new InternalServerErrorException('Query facebook user failed');
-    // }
+          const payload: JwtPayload = { email };
+          const accessToken: string = await this.jwtService.sign(payload);
+          res = { user: ggUser, accessToken };
+        } catch (err) {
+          throw new InternalServerErrorException(
+            'Create accout from FB failed',
+          );
+        }
+      }
+    } catch (error) {
+      throw new InternalServerErrorException('Query facebook user failed');
+    }
 
     var responseHTML =
       '<html><head><title>Main</title></head><body></body><script>let res = %value%; window.opener.postMessage(res, "*");window.close();</script></html>';
