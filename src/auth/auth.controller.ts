@@ -11,6 +11,8 @@ import { AuthService } from './auth.service';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { Request } from "express";
+
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -36,16 +38,18 @@ export class AuthController {
   googleAuthRedirect(@Req() req) {
     return this.authService.googleLogin(req);
   }
-
   @Get('/facebook')
   @UseGuards(AuthGuard('facebook'))
-  async facebookLogin(@Req() req): Promise<any> {
-    HttpStatus.OK;
+  async facebookLogin(): Promise<any> {
+    return HttpStatus.OK;
   }
 
   @Get('/facebook/redirect')
   @UseGuards(AuthGuard('facebook'))
-  facebookLoginRedirect(@Req() req): Promise<any> {
-    return this.authService.FBLogin(req);
+  async facebookLoginRedirect(@Req() req: Request): Promise<any> {
+    return {
+      statusCode: HttpStatus.OK,
+      data: req.user
+    };
   }
 }
