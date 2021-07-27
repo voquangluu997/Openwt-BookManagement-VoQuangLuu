@@ -36,13 +36,23 @@ export class AuthService {
   }
 
   googleLogin(req) {
-    if (!req.user) {
-      return 'No user from google';
-    }
+    // if (!req.user) {
+    //   return 'No user from google';
+    // }
 
-    return {
-      message: 'User information from google',
-      user: req.user,
-    };
+    // return {
+    //   message: 'User information from google',
+    //   user: req.user,
+    // };
+
+    var responseHTML =
+      '<html><head><title>Main</title></head><body></body><script>let res = %value%; window.opener.postMessage(res, "*");window.close();</script></html>';
+    responseHTML = responseHTML.replace(
+      '%value%',
+      JSON.stringify({
+        user: req.user,
+      }),
+    );
+    return responseHTML;
   }
 }
