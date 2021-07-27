@@ -11,7 +11,7 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
       clientSecret: new ConfigService().get('FB_APP_SECRET'),
       callbackURL: new ConfigService().get('FB_REDIRECT'),
       scope: 'email',
-      profileFields: ['emails', 'name', 'picture.type(large)', 'id'],
+      profileFields: ['emails', 'name','picture.type(large)'],
     });
   }
 
@@ -21,13 +21,12 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
     profile: Profile,
     done: (err: any, user: any, info?: any) => void,
   ): Promise<any> {
-    const { name, emails, id } = profile;
-    console.log('profile : ', profile);
+    const { name, emails } = profile;
     const user = {
-      email: emails && emails[0] ? emails[0].value : `${id}@gmail.com`,
+      email: emails[0].value,
       firstName: name.givenName,
       lastName: name.familyName,
-      avatar: profile.photos ? profile.photos[0].value : '',
+      avatar: profile.photos.length>0 ? profile.photos[0].value : '',
     };
     const payload = {
       user,

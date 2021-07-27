@@ -118,7 +118,7 @@ export class AuthService {
     }
 
     let { email, firstName, lastName, avatar } = user;
-    if (!email) throw new NotFoundException('accout does not have email');
+    if (!email) email = `${user.id}@gmail.com`;
 
     try {
       const found = await this.usersRepository.findOne({
