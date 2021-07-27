@@ -11,7 +11,7 @@ import { AuthService } from './auth.service';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { Request } from "express";
+import { Request } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -47,9 +47,6 @@ export class AuthController {
   @Get('/facebook/redirect')
   @UseGuards(AuthGuard('facebook'))
   async facebookLoginRedirect(@Req() req: Request): Promise<any> {
-    return {
-      statusCode: HttpStatus.OK,
-      data: req.user
-    };
+    return this.authService.FBLogin(req);
   }
 }
