@@ -124,56 +124,60 @@ export class AuthService {
         email,
       });
 
-      if (found) {
-        ggUser = this.usersRepository.create({
-          email,
-          firstName: found.firstName,
-          lastName: found.lastName,
-          avatar: found.avatar == '' ? avatar : found.avatar,
-        });
+      // if (found) {
+      //   ggUser = this.usersRepository.create({
+      //     email,
+      //     firstName: found.firstName,
+      //     lastName: found.lastName,
+      //     avatar: found.avatar == '' ? avatar : found.avatar,
+      //   });
 
-        const payload: JwtPayload = { email };
-        const accessToken: string = await this.jwtService.sign(payload);
+      //   const payload: JwtPayload = { email };
+      //   const accessToken: string = await this.jwtService.sign(payload);
 
-        res = { user: ggUser, accessToken };
-      } else {
-        const defaultPassword = email;
-        const salt = await bcrypt.genSalt();
-        const hashPassword = await bcrypt.hash(defaultPassword, salt);
-        ggUser = {
-          email,
-          firstName,
-          lastName,
-          avatar,
-        };
+      //   res = { user: ggUser, accessToken };
+      // } else {
+      //   ggUser = {
+      //     no: true,
+      //   };
+      //   // const defaultPassword = email;
+      //   // const salt = await bcrypt.genSalt();
+      //   // const hashPassword = await bcrypt.hash(defaultPassword, salt);
+      //   // ggUser = {
+      //   //   email,
+      //   //   firstName,
+      //   //   lastName,
+      //   //   avatar,
+      //   //   else:true
+      //   // };
 
-        // try {
-        //   await this.usersRepository.save({
-        //     ...ggUser,
-        //     ...{ password: hashPassword },
-        //   });
+      //   // try {
+      //   //   await this.usersRepository.save({
+      //   //     ...ggUser,
+      //   //     ...{ password: hashPassword },
+      //   //   });
 
-        //   const payload: JwtPayload = { email };
-        //   const accessToken: string = await this.jwtService.sign(payload);
-        //   res = { user: ggUser, accessToken };
-        // } catch (err) {
-        //   throw new InternalServerErrorException(
-        //     'Create accout from FB failed',
-        //   );
-        // }
-      }
+      //   //   const payload: JwtPayload = { email };
+      //   //   const accessToken: string = await this.jwtService.sign(payload);
+      //   //   res = { user: ggUser, accessToken };
+      //   // } catch (err) {
+      //   //   throw new InternalServerErrorException(
+      //   //     'Create accout from FB failed',
+      //   //   );
+      //   // }
+      // }
+
+      var responseHTML =
+        '<html><head><title>Main</title></head><body></body><script>let res = %value%; window.opener.postMessage(res, "*");window.close();</script></html>';
+      responseHTML = responseHTML.replace(
+        '%value%',
+        JSON.stringify({
+          userInfo: found,
+        }),
+      );
+      return responseHTML;
     } catch (error) {
       throw new InternalServerErrorException('Query facebook user failed');
     }
-
-    var responseHTML =
-      '<html><head><title>Main</title></head><body></body><script>let res = %value%; window.opener.postMessage(res, "*");window.close();</script></html>';
-    responseHTML = responseHTML.replace(
-      '%value%',
-      JSON.stringify({
-        userInfo:ggUser,
-      }),
-    );
-    return responseHTML;
   }
 }
