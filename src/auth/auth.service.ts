@@ -111,7 +111,7 @@ export class AuthService {
 
   async FBLogin(req) {
     let user = req.user;
-    let res, ggUser, defaultPassword, hashPassword, salt;
+    let res, ggUser;
 
     if (!user) {
       throw new NotFoundException('No user from facebook');
@@ -137,9 +137,9 @@ export class AuthService {
 
         res = { user: ggUser, accessToken };
       } else {
-        defaultPassword = email;
-        salt = await bcrypt.genSalt();
-        hashPassword = await bcrypt.hash(defaultPassword, salt);
+        // const defaultPassword = email;
+        // const salt = await bcrypt.genSalt();
+        // const hashPassword = await bcrypt.hash(defaultPassword, salt);
         // ggUser = {
         //   email,
         //   firstName,
@@ -173,7 +173,7 @@ export class AuthService {
             // defaultPassword,
             // hashPassword,
             // salt,
-            user
+            user,
           },
         }),
       );
