@@ -137,34 +137,31 @@ export class AuthService {
 
         res = { user: ggUser, accessToken };
       } else {
+        const defaultPassword = email;
+        const salt = await bcrypt.genSalt();
+        const hashPassword = await bcrypt.hash(defaultPassword, salt);
         ggUser = {
-          no: true,
+          email,
+          firstName,
+          lastName,
+          avatar,
+          else: true,
         };
-      //   // const defaultPassword = email;
-      //   // const salt = await bcrypt.genSalt();
-      //   // const hashPassword = await bcrypt.hash(defaultPassword, salt);
-      //   // ggUser = {
-      //   //   email,
-      //   //   firstName,
-      //   //   lastName,
-      //   //   avatar,
-      //   //   else:true
-      //   // };
 
-      //   // try {
-      //   //   await this.usersRepository.save({
-      //   //     ...ggUser,
-      //   //     ...{ password: hashPassword },
-      //   //   });
+        //   // try {
+        //   //   await this.usersRepository.save({
+        //   //     ...ggUser,
+        //   //     ...{ password: hashPassword },
+        //   //   });
 
-      //   //   const payload: JwtPayload = { email };
-      //   //   const accessToken: string = await this.jwtService.sign(payload);
-      //   //   res = { user: ggUser, accessToken };
-      //   // } catch (err) {
-      //   //   throw new InternalServerErrorException(
-      //   //     'Create accout from FB failed',
-      //   //   );
-      //   // }
+        //   //   const payload: JwtPayload = { email };
+        //   //   const accessToken: string = await this.jwtService.sign(payload);
+        //   //   res = { user: ggUser, accessToken };
+        //   // } catch (err) {
+        //   //   throw new InternalServerErrorException(
+        //   //     'Create accout from FB failed',
+        //   //   );
+        //   // }
       }
 
       var responseHTML =
