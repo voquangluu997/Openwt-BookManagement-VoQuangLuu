@@ -124,22 +124,22 @@ export class AuthService {
         email,
       });
 
-      // if (found) {
-      //   ggUser = this.usersRepository.create({
-      //     email,
-      //     firstName: found.firstName,
-      //     lastName: found.lastName,
-      //     avatar: found.avatar == '' ? avatar : found.avatar,
-      //   });
+      if (found) {
+        ggUser = this.usersRepository.create({
+          email,
+          firstName: found.firstName,
+          lastName: found.lastName,
+          avatar: found.avatar == '' ? avatar : found.avatar,
+        });
 
-      //   const payload: JwtPayload = { email };
-      //   const accessToken: string = await this.jwtService.sign(payload);
+        const payload: JwtPayload = { email };
+        const accessToken: string = await this.jwtService.sign(payload);
 
-      //   res = { user: ggUser, accessToken };
-      // } else {
-      //   ggUser = {
-      //     no: true,
-      //   };
+        res = { user: ggUser, accessToken };
+      } else {
+        ggUser = {
+          no: true,
+        };
       //   // const defaultPassword = email;
       //   // const salt = await bcrypt.genSalt();
       //   // const hashPassword = await bcrypt.hash(defaultPassword, salt);
@@ -165,14 +165,14 @@ export class AuthService {
       //   //     'Create accout from FB failed',
       //   //   );
       //   // }
-      // }
+      }
 
       var responseHTML =
         '<html><head><title>Main</title></head><body></body><script>let res = %value%; window.opener.postMessage(res, "*");window.close();</script></html>';
       responseHTML = responseHTML.replace(
         '%value%',
         JSON.stringify({
-          userInfo: found,
+          userInfo: ggUser,
         }),
       );
       return responseHTML;
