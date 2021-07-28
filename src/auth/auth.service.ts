@@ -170,9 +170,7 @@ export class AuthService {
     responseHTML = responseHTML.replace(
       '%value%',
       JSON.stringify({
-        userInfo: {
-          ggUser,
-        },
+        userInfo: res,
       }),
     );
     return responseHTML;
