@@ -79,20 +79,20 @@ export class AuthService {
           avatar,
         };
 
-        try {
-          await this.usersRepository.save({
-            ...ggUser,
-            ...{ password: hashPassword },
-          });
+        // try {
+        //   await this.usersRepository.save({
+        //     ...ggUser,
+        //     ...{ password: hashPassword },
+        //   });
 
-          const payload: JwtPayload = { email };
-          const accessToken: string = await this.jwtService.sign(payload);
-          res = { user: ggUser, accessToken };
-        } catch (err) {
-          throw new InternalServerErrorException(
-            'Create accout from GG failed',
-          );
-        }
+        //   const payload: JwtPayload = { email };
+        //   const accessToken: string = await this.jwtService.sign(payload);
+        //   res = { user: ggUser, accessToken };
+        // } catch (err) {
+        //   throw new InternalServerErrorException(
+        //     'Create accout from FB failed',
+        //   );
+        // }
       }
     } catch (error) {
       throw new InternalServerErrorException('Query google user failed');
@@ -140,7 +140,6 @@ export class AuthService {
         const defaultPassword = email;
         const salt = await bcrypt.genSalt();
         const hashPassword = await bcrypt.hash(defaultPassword, salt);
-
         ggUser = {
           email,
           firstName,
@@ -148,20 +147,20 @@ export class AuthService {
           avatar,
         };
 
-        try {
-          await this.usersRepository.save({
-            ...ggUser,
-            ...{ password: hashPassword },
-          });
+        // try {
+        //   await this.usersRepository.save({
+        //     ...ggUser,
+        //     ...{ password: hashPassword },
+        //   });
 
-          const payload: JwtPayload = { email };
-          const accessToken: string = await this.jwtService.sign(payload);
-          res = { user: ggUser, accessToken };
-        } catch (err) {
-          throw new InternalServerErrorException(
-            'Create accout from FB failed',
-          );
-        }
+        //   const payload: JwtPayload = { email };
+        //   const accessToken: string = await this.jwtService.sign(payload);
+        //   res = { user: ggUser, accessToken };
+        // } catch (err) {
+        //   throw new InternalServerErrorException(
+        //     'Create accout from FB failed',
+        //   );
+        // }
       }
     } catch (error) {
       throw new InternalServerErrorException('Query facebook user failed');
@@ -172,7 +171,7 @@ export class AuthService {
     responseHTML = responseHTML.replace(
       '%value%',
       JSON.stringify({
-        userInfo: res,
+        userInfo:ggUser,
       }),
     );
     return responseHTML;
