@@ -173,11 +173,7 @@ export class AuthService {
             // defaultPassword,
             // hashPassword,
             // salt,
-            email,
-            firstName,
-            lastName,
-            avatar,
-            defaultPassword,
+            user
           },
         }),
       );
