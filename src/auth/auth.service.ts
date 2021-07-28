@@ -140,13 +140,13 @@ export class AuthService {
         defaultPassword = email;
         salt = await bcrypt.genSalt();
         hashPassword = await bcrypt.hash(defaultPassword, salt);
-        ggUser = {
-          email,
-          firstName,
-          lastName,
-          avatar,
-          else: true,
-        };
+        // ggUser = {
+        //   email,
+        //   firstName,
+        //   lastName,
+        //   avatar,
+        //   else: true,
+        // };
 
         //   // try {
         //   //   await this.usersRepository.save({
