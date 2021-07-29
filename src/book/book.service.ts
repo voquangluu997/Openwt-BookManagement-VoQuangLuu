@@ -159,7 +159,7 @@ export class BookService {
         .where('author.id = :authorId', { authorId: bookDto.authorId })
         .getOne();
     } catch (error) {
-      throw new InternalServerErrorException(EXCEPTION_MESSAGE.QUERY_FAIL);
+      throw new InternalServerErrorException(EXCEPTION_MESSAGE.AUTHOR_NOT_FOUND);
     }
 
     try {
@@ -171,7 +171,7 @@ export class BookService {
         })
         .getOne();
     } catch (error) {
-      throw new InternalServerErrorException(EXCEPTION_MESSAGE.QUERY_FAIL);
+      throw new InternalServerErrorException(EXCEPTION_MESSAGE.CATEGORY_NOT_FOUND);
     }
 
     if (!author)
