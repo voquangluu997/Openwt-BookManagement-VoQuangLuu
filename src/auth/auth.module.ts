@@ -21,7 +21,7 @@ import { FacebookStrategy } from './facebook-strategy';
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get('JWT_SECRET'),
         signOptions: {
-          expiresIn: 3600,
+          expiresIn: 3600000000000,
         },
       }),
     }),
