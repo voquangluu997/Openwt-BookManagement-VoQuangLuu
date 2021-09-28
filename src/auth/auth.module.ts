@@ -9,7 +9,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { GoogleStrategy } from './google.strategy';
 import { FacebookStrategy } from './facebook-strategy';
-
+import { HttpModule } from '@nestjs/axios';
+// import { MailerModule } from '@nestjs-modules/mailer';
+// import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 @Module({
   imports: [
@@ -26,8 +28,9 @@ import { FacebookStrategy } from './facebook-strategy';
       }),
     }),
     TypeOrmModule.forFeature([UsersRepository]),
+    HttpModule
   ],
-  providers: [AuthService, JwtStrategy,GoogleStrategy,FacebookStrategy],
+  providers: [AuthService, JwtStrategy, GoogleStrategy, FacebookStrategy],
   controllers: [AuthController],
   exports: [JwtStrategy, PassportModule],
 })

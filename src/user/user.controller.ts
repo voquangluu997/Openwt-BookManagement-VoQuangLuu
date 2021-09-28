@@ -36,4 +36,6 @@ export class UserController {
   ): Promise<{ message: string }> {
     return this.userService.updatePassword(updatePasswordDto, user);
   }
+
+  
 }

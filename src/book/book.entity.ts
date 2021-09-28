@@ -7,6 +7,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Timestamp,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -30,11 +31,18 @@ export class Book {
   @Column({ default: '' })
   cover: string;
 
-  @CreateDateColumn()
-  created_at: string;
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
+  created_at: Date;
 
-  @UpdateDateColumn()
-  updated_at: string;
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
+  })
+  updated_at: Date;
 
   @Column({ default: false, name: 'is_deleted' })
   isDeleted: boolean;

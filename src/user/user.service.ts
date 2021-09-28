@@ -35,6 +35,15 @@ export class UserService {
     return userInfo;
   }
 
+  async findByEmail(email: string): Promise<User> {
+    const found = await this.userRepository.findOne({ where: { email } });
+    const { id, firstName, lastName, avatar } = found;
+    if (!found) {
+      throw new NotFoundException(EXCEPTION_MESSAGE.USER_NOTFOUND);
+    }
+    return found;
+  }
+
   async getProfile(user: User): Promise<GetUserProfileDto> {
     const { id, firstName, lastName, email, avatar } = user;
     let userInfo: GetUserProfileDto = {

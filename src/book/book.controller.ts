@@ -14,9 +14,11 @@ import {
 import { Book } from './book.entity';
 import { BookService } from './book.service';
 import { BookDto } from './dto/book.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('books')
 @UseGuards(AuthGuard())
+@ApiBearerAuth()
 export class BookController {
   constructor(private bookService: BookService) {}
 

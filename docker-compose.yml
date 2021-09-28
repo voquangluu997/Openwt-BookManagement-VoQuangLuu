@@ -1,0 +1,16 @@
+version: "3.7"
+
+services: 
+  pgdb: 
+    image: postgres
+    ports: 
+     - 5432:5432
+    environment: 
+      POSTGRES_USER: dbuser
+      POSTGRES_PASSWORD: dbpassword
+      POSTGRES_ROOT_PASSWORD: root
+      POSTGRES_DATABASE: db_main
+    volumes:
+      - ./docker/data:/var/lib/postgresql/data
+    networks:
+      - default

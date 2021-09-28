@@ -7,6 +7,7 @@ export enum VALIDATE_ERROR {
   PASSWORD_INCORRECT = 'Password incorrect',
   CONFIRM_PASSWORD_FAILED = 'New password and confirm password must be the same',
   CONFLICT_CODE = '23505',
+  NOT_MATCHED = 'NOT MATCHED',
 }
 
 export enum EXCEPTION_MESSAGE {
