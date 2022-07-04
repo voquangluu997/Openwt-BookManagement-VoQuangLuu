@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -17,26 +18,31 @@ import javax.persistence.*;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    long id;
 
     @Column(unique = true)
     @NotNull
-    private String email;
+    String email;
 
     @Column
     @NotNull
-    private String password;
+    String password;
 
     @Column
-    private String firstName;
+    String firstName;
 
     @Column
-    private String lastName;
+    String lastName;
 
     @Column
-    private String avatar;
+    String avatar;
 
-    @Column
     @NotNull
-    private Boolean enabled;
+    @Builder.Default
+    @Column(columnDefinition = "boolean default true")
+    Boolean enabled = true;
+
+    @OneToMany(mappedBy = "user")
+    List<Book> books;
+
 }

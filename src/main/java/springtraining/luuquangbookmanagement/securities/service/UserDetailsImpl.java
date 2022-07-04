@@ -2,11 +2,11 @@ package springtraining.luuquangbookmanagement.securities.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import springtraining.luuquangbookmanagement.repositories.entities.User;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Objects;
 
 public class UserDetailsImpl implements UserDetails {
 
@@ -15,21 +15,23 @@ public class UserDetailsImpl implements UserDetails {
     private long id;
 
     private String username;
-
+    private String firstName;
+    private String lastName;
     @JsonIgnore
     private String password;
-
     private boolean isEnabled;
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(long id, String username, String password, boolean isEnabled
+    public UserDetailsImpl(long id, String username, String firstName, String lastName, String password, boolean isEnabled
 //                           Collection<? extends GrantedAuthority> authorities
     ) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.isEnabled = isEnabled;
+        this.firstName = firstName;
+        this.lastName = lastName;
 //        this.authorities = authorities;
     }
 
@@ -40,6 +42,8 @@ public class UserDetailsImpl implements UserDetails {
         return new UserDetailsImpl(
                 user.getId(),
                 user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
                 user.getPassword(),
                 user.getEnabled()
 //                authorities
@@ -64,6 +68,15 @@ public class UserDetailsImpl implements UserDetails {
     public String getUsername() {
         return username;
     }
+
+    public String getFirstName() {
+        return username;
+    }
+
+    public String getLastName() {
+        return username;
+    }
+
 
     @Override
     public boolean isAccountNonExpired() {

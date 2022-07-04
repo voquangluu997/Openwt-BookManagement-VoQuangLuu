@@ -1,14 +1,20 @@
 package springtraining.luuquangbookmanagement.securities.service;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import springtraining.luuquangbookmanagement.controllers.dto.UserResponseDTO;
+import springtraining.luuquangbookmanagement.controllers.auth.AuthController;
+import springtraining.luuquangbookmanagement.controllers.auth.dto.RegisterRequestDTO;
+import springtraining.luuquangbookmanagement.controllers.user.dto.UserResponseDTO;
+import springtraining.luuquangbookmanagement.exceptions.BadRequestException;
+import springtraining.luuquangbookmanagement.exceptions.NotFoundException;
 import springtraining.luuquangbookmanagement.repositories.UserRepository;
+import springtraining.luuquangbookmanagement.repositories.entities.User;
 import springtraining.luuquangbookmanagement.securities.jwt.TokenManager;
 
 @Service
@@ -17,33 +23,73 @@ public class AuthService {
     UserRepository userRepository;
 
     @Autowired
+    UserDetailsServiceImpl userDetailsService;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
+    @Autowired
     private TokenManager tokenManager;
 
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    private UserDetailsServiceImpl userDetailsService;
+
+    public UserResponseDTO login(AuthController.LoginRequestDTO loginRequest) throws Exception {
+        User user = userRepository.findByEmail(loginRequest.getEmail());
+        if (user == null)
+            throw new NotFoundException("User with email " + loginRequest.getEmail() + " not found ");
+//        if (user.getEnabled() == true) {
+            final Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getEmail(),
+                            loginRequest.getPassword()
+                    )
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            UserDetailsImpl userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
+            final String token = tokenManager.generateToken(userDetails);
+            return UserResponseDTO.builder()
+                    .firstName(user.getFirstName())
+                    .lastName(user.getLastName())
+                    .email(loginRequest.getEmail())
+                    .avatar(user.getAvatar())
+                    .token(token)
+                    .build();
+
+//        }
+//        return UserResponseDTO.builder()
+//                .firstName(user.getFirstName())
+//                .lastName(user.getLastName())
+//                .email(loginRequest.getEmail())
+//                .avatar(user.getAvatar())
+//                .token("token")
+//                .build();
 
 
-    public UserResponseDTO login(String email, String password) throws Exception {
+    }
 
-        try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
-
-        } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED");
-        } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS");
+    public UserResponseDTO register(RegisterRequestDTO registerRequest) {
+        User user = userRepository.findByEmail(registerRequest.getEmail());
+        if (user != null) {
+            throw new BadRequestException("This email address is already being used");
         }
-
-        final UserDetailsImpl userDetails = userDetailsService.loadUserByUsername(email);
-        final String jwtToken = tokenManager.generateJwtToken(userDetails);
-        return UserResponseDTO.builder()
-                .firstName("")
-                .lastName("")
-                .email(email)
-                .avatar("")
+        user = this.convertRegisterRequestDTOToUserEntity(registerRequest);
+        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        final User savedUser = userRepository.save(user);
+        UserDetailsImpl userDetails = userDetailsService.loadUserByUsername(registerRequest.getEmail());
+        String jwtToken = tokenManager.generateToken(userDetails);
+        return UserResponseDTO.builder().firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(registerRequest.getEmail())
+                .avatar(user.getAvatar())
+                .avatar(user.getAvatar())
                 .token(jwtToken)
                 .build();
     }
+
+    private User convertRegisterRequestDTOToUserEntity(RegisterRequestDTO registerRequestDTO) {
+        return modelMapper.map(registerRequestDTO, User.class);
+    }
+
 }

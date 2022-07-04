@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import springtraining.luuquangbookmanagement.securities.service.UserDetailsImpl;
 import springtraining.luuquangbookmanagement.securities.service.UserDetailsServiceImpl;
 
 import javax.servlet.FilterChain;
@@ -17,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
     @Autowired
@@ -44,7 +44,7 @@ public class JwtFilter extends OncePerRequestFilter {
             System.out.println("Bearer String not found in token");
         }
         if (null != username && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UserDetailsImpl userDetails = userDetailsService.loadUserByUsername(username);
             if (tokenManager.validateJwtToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken
                         authenticationToken = new UsernamePasswordAuthenticationToken(

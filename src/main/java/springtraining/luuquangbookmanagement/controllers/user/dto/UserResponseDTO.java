@@ -1,4 +1,4 @@
-package springtraining.luuquangbookmanagement.controllers.dto;
+package springtraining.luuquangbookmanagement.controllers.user.dto;
 
 import lombok.Builder;
 import lombok.Data;
