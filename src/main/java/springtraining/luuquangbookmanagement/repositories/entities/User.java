@@ -1,5 +1,6 @@
 package springtraining.luuquangbookmanagement.repositories.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,5 +45,11 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     List<Book> books;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    @JsonIgnoreProperties("users")
+    private Role role;
+
 
 }

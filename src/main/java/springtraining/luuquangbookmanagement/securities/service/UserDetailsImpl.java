@@ -1,12 +1,13 @@
 package springtraining.luuquangbookmanagement.securities.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import springtraining.luuquangbookmanagement.repositories.entities.User;
 
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 
 public class UserDetailsImpl implements UserDetails {
 
@@ -23,8 +24,8 @@ public class UserDetailsImpl implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(long id, String username, String firstName, String lastName, String password, boolean isEnabled
-//                           Collection<? extends GrantedAuthority> authorities
+    public UserDetailsImpl(long id, String username, String firstName, String lastName, String password, boolean isEnabled,
+                           Collection<? extends GrantedAuthority> authorities
     ) {
         this.id = id;
         this.username = username;
@@ -32,12 +33,12 @@ public class UserDetailsImpl implements UserDetails {
         this.isEnabled = isEnabled;
         this.firstName = firstName;
         this.lastName = lastName;
-//        this.authorities = authorities;
+        this.authorities = authorities;
     }
 
     public static UserDetailsImpl build(User user) {
-//        List<GrantedAuthority> authorities = new ArrayList<>(Collections.singletonList(
-//                new SimpleGrantedAuthority(user.getRole().getName())));
+        List<GrantedAuthority> authorities = new ArrayList<>(Collections.singletonList(
+                new SimpleGrantedAuthority(user.getRole().getName())));
 
         return new UserDetailsImpl(
                 user.getId(),
@@ -45,8 +46,8 @@ public class UserDetailsImpl implements UserDetails {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getPassword(),
-                user.getEnabled()
-//                authorities
+                user.getEnabled(),
+                authorities
         );
     }
 

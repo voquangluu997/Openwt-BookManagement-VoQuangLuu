@@ -13,7 +13,9 @@ import springtraining.luuquangbookmanagement.controllers.auth.dto.RegisterReques
 import springtraining.luuquangbookmanagement.controllers.user.dto.UserResponseDTO;
 import springtraining.luuquangbookmanagement.exceptions.BadRequestException;
 import springtraining.luuquangbookmanagement.exceptions.NotFoundException;
+import springtraining.luuquangbookmanagement.repositories.RoleRepository;
 import springtraining.luuquangbookmanagement.repositories.UserRepository;
+import springtraining.luuquangbookmanagement.repositories.entities.Role;
 import springtraining.luuquangbookmanagement.repositories.entities.User;
 import springtraining.luuquangbookmanagement.securities.jwt.TokenManager;
 
@@ -21,6 +23,9 @@ import springtraining.luuquangbookmanagement.securities.jwt.TokenManager;
 public class AuthService {
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    RoleRepository roleRepository;
 
     @Autowired
     UserDetailsServiceImpl userDetailsService;
@@ -39,34 +44,23 @@ public class AuthService {
         User user = userRepository.findByEmail(loginRequest.getEmail());
         if (user == null)
             throw new NotFoundException("User with email " + loginRequest.getEmail() + " not found ");
-//        if (user.getEnabled() == true) {
-            final Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequest.getEmail(),
-                            loginRequest.getPassword()
-                    )
-            );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            UserDetailsImpl userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
-            final String token = tokenManager.generateToken(userDetails);
-            return UserResponseDTO.builder()
-                    .firstName(user.getFirstName())
-                    .lastName(user.getLastName())
-                    .email(loginRequest.getEmail())
-                    .avatar(user.getAvatar())
-                    .token(token)
-                    .build();
-
-//        }
-//        return UserResponseDTO.builder()
-//                .firstName(user.getFirstName())
-//                .lastName(user.getLastName())
-//                .email(loginRequest.getEmail())
-//                .avatar(user.getAvatar())
-//                .token("token")
-//                .build();
-
-
+        final Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getEmail(),
+                        loginRequest.getPassword()
+                )
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        UserDetailsImpl userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
+        final String token = tokenManager.generateToken(userDetails);
+        return UserResponseDTO.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .avatar(user.getAvatar())
+                .token(token)
+                .role(user.getRole().getName())
+                .build();
     }
 
     public UserResponseDTO register(RegisterRequestDTO registerRequest) {
@@ -76,6 +70,8 @@ public class AuthService {
         }
         user = this.convertRegisterRequestDTOToUserEntity(registerRequest);
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        Role role = roleRepository.findByName("USER");
+        user.setRole(role);
         final User savedUser = userRepository.save(user);
         UserDetailsImpl userDetails = userDetailsService.loadUserByUsername(registerRequest.getEmail());
         String jwtToken = tokenManager.generateToken(userDetails);
@@ -85,6 +81,7 @@ public class AuthService {
                 .avatar(user.getAvatar())
                 .avatar(user.getAvatar())
                 .token(jwtToken)
+                .role(role.getName())
                 .build();
     }
 

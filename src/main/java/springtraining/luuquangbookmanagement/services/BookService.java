@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import springtraining.luuquangbookmanagement.controllers.book.dto.AddBookRequestDTO;
 import springtraining.luuquangbookmanagement.controllers.book.dto.BookFilterDTO;
@@ -17,6 +18,7 @@ import springtraining.luuquangbookmanagement.repositories.UserRepository;
 import springtraining.luuquangbookmanagement.repositories.entities.Book;
 import springtraining.luuquangbookmanagement.repositories.entities.User;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -39,9 +41,9 @@ public class BookService {
                 "%" + bookFilter.getSearch() + "%",
                 paging,
                 bookFilter.getOrderBy());
-        List<Book> books = bookPage.getContent();
+        System.out.println(bookPage);
         return GetBooksResponseDTO.builder()
-                .books(books)
+                .books(bookPage.getContent())
                 .currentPage(bookPage.getNumber())
                 .totalItems(bookPage.getTotalElements())
                 .totalPages(bookPage.getTotalPages())
@@ -64,9 +66,11 @@ public class BookService {
         User user = userRepository.findById(bookRequest.getUserId());
         Book book = convertAddBookDTOToBookEntity(bookRequest);
         book.setUser(user);
+        book.setCreatedAt(new Date());
         return bookRepository.save(book);
     }
 
+    @Secured("ADMIN")
     public Book deleteById(long id) throws NotFoundException {
         Book book = bookRepository.findById(id);
         if (book.getEnabled()) {
@@ -90,6 +94,7 @@ public class BookService {
         User user = userRepository.findById(bookRequest.getUserId());
         Book book = convertUpdateBookDTOToBookEntity(bookRequest);
         book.setUser(user);
+        book.setCreatedAt(new Date());
         return bookRepository.save(book);
     }
 

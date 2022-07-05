@@ -26,17 +26,17 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public Book findById(@PathVariable long id) throws NotFoundException {
+    public Book getById(@PathVariable long id) throws NotFoundException {
         return bookService.getById(id);
     }
 
-    @PostMapping
+    @PostMapping("admin")
     public Book addBook(@RequestBody AddBookRequestDTO bookRequest)  {
         System.out.println(bookRequest);
         return bookService.addBook(bookRequest);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("admin/{id}")
     public Book deleteBook(@PathVariable long id) throws NotFoundException {
         return bookService.deleteById(id);
     }
