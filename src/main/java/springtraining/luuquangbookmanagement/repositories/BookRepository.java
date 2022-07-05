@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import springtraining.luuquangbookmanagement.repositories.entities.Book;
+import springtraining.luuquangbookmanagement.repositories.entities.User;
+
+import java.util.List;
 
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
@@ -13,6 +16,9 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             nativeQuery = true)
     Page<Book> search(String search, Pageable pageable, String orderBy);
 
-//    List<Book> findByUser(User user);
+    Book findById(long id);
+
+    Book deleteById(long id);
+
 
 }

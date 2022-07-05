@@ -1,4 +1,3 @@
-drop table book;
 create table user(
 	id serial not null primary key,
 	email varchar(255) not null,

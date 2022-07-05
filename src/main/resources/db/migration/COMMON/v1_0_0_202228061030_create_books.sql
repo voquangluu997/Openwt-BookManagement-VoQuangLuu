@@ -1,4 +1,3 @@
-drop table book;
 
 create table book(
 	id serial not null primary key,

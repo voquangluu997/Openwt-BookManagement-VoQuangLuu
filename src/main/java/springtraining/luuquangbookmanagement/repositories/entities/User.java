@@ -18,29 +18,29 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    long id;
+    private long id;
 
     @Column(unique = true)
     @NotNull
-    String email;
+    private String email;
 
     @Column
     @NotNull
-    String password;
+    private String password;
 
     @Column
-    String firstName;
+    private String firstName;
 
     @Column
-    String lastName;
+    private String lastName;
 
     @Column
-    String avatar;
+    private String avatar;
 
     @NotNull
     @Builder.Default
     @Column(columnDefinition = "boolean default true")
-    Boolean enabled = true;
+    private Boolean enabled = true;
 
     @OneToMany(mappedBy = "user")
     List<Book> books;

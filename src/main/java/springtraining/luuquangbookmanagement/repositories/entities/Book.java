@@ -3,16 +3,20 @@ package springtraining.luuquangbookmanagement.repositories.entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Data
+@Builder
+@EnableJpaAuditing
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "book")
@@ -20,36 +24,38 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column
-     long id;
+    private long id;
 
     @Column
     @NotNull
-     String title;
+    private String title;
 
     @Column
     @NotNull
-     String author;
+    private String author;
 
     @Column
-     String description;
+    private String description;
 
     @Column
-     String image;
+    private String image;
 
-    @Column
+    @Column(columnDefinition = "boolean default true")
     @NotNull
-     Boolean enabled;
+    @Builder.Default
+    private Boolean enabled = true;
 
     @Column(name = "created_at")
     @CreatedDate
-     Date createdAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
 
     @LastModifiedDate
     @Column(name = "updated_at")
-     Date updatedAt;
+    private Date updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonIgnoreProperties("books")
-     private User user;
+    private User user;
 }
