@@ -53,7 +53,7 @@ public class BookService {
     public Book getById(long id) throws
             NotFoundException {
         Book book = bookRepository.findById(id);
-        if (book != null && book.getEnabled()) {
+        if (book != null ) {
             return book;
         }
         throw new NotFoundException("Book ID " + id + " is not found.");

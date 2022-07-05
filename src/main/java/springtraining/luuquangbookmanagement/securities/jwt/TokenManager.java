@@ -4,7 +4,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import springtraining.luuquangbookmanagement.securities.service.UserDetailsImpl;
 
@@ -21,15 +20,6 @@ public class TokenManager implements Serializable {
     public static final long TOKEN_VALIDITY = 10 * 60 * 60;
     @Value("${jwtSecret}")
     private String jwtSecret;
-
-    public String generateJwtToken(Authentication authentication) {
-        Map<String, Object> claims = new HashMap<>();
-        UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-        return Jwts.builder().setClaims(claims).setSubject(userPrincipal.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALIDITY * 1000))
-                .signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
-    }
 
     public String generateToken(UserDetailsImpl userDetails) {
         Map<String, Object> claims = new HashMap<>();

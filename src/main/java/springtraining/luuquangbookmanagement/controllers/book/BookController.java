@@ -1,6 +1,7 @@
 package springtraining.luuquangbookmanagement.controllers.book;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import springtraining.luuquangbookmanagement.controllers.book.dto.AddBookRequestDTO;
 import springtraining.luuquangbookmanagement.controllers.book.dto.BookFilterDTO;
@@ -9,8 +10,6 @@ import springtraining.luuquangbookmanagement.controllers.book.dto.UpdateBookRequ
 import springtraining.luuquangbookmanagement.exceptions.NotFoundException;
 import springtraining.luuquangbookmanagement.repositories.entities.Book;
 import springtraining.luuquangbookmanagement.services.BookService;
-
-import java.text.ParseException;
 
 @RestController
 @RequestMapping("/books")
@@ -30,25 +29,23 @@ public class BookController {
         return bookService.getById(id);
     }
 
-    @PostMapping("admin")
-    public Book addBook(@RequestBody AddBookRequestDTO bookRequest)  {
+    @Secured("ADMIN")
+    @PostMapping
+    public Book addBook(@RequestBody AddBookRequestDTO bookRequest) {
         System.out.println(bookRequest);
         return bookService.addBook(bookRequest);
     }
 
-    @DeleteMapping("admin/{id}")
+    @Secured("ADMIN")
+    @DeleteMapping("/{id}")
     public Book deleteBook(@PathVariable long id) throws NotFoundException {
         return bookService.deleteById(id);
     }
 
+    @Secured("ADMIN")
     @PutMapping("/{id}")
     public Book update(@PathVariable long id, @RequestBody UpdateBookRequestDTO bookRequest) throws NotFoundException {
         return bookService.update(id, bookRequest);
     }
-
-//    @GetMapping("/user/{userId}")
-//    public List<Book> getBooksByUserId(@PathVariable int userId) throws NotFoundException {
-//        return bookService.getBooksByUserId(userId);
-//    }
 
 }
