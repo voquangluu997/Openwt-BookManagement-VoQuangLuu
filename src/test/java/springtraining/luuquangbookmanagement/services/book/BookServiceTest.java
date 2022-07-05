@@ -14,6 +14,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import springtraining.luuquangbookmanagement.mocks.book.BookMock;
 import springtraining.luuquangbookmanagement.repositories.BookRepository;
+import springtraining.luuquangbookmanagement.repositories.UserRepository;
 import springtraining.luuquangbookmanagement.repositories.entities.Book;
 import springtraining.luuquangbookmanagement.services.BookService;
 
@@ -32,7 +33,7 @@ public class BookServiceTest {
     private BookRepository bookRepository;
 
     @MockBean
-    private BookRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private BookService bookService;
